@@ -30,7 +30,7 @@ desired_humidity = 50.0     # Umidade desejada inicial
 
 # Database connection parameters
 db_config = {
-    'dbname': 'sensor',
+    'dbname': 'services',
     'user': 'postgres',
     'password': 'postgres',
     'host': '127.0.0.1',
