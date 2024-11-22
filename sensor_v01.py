@@ -2,11 +2,11 @@ import time
 import adafruit_dht
 import board
 import RPi.GPIO as GPIO
-import tkinter as tk
-from tkinter import messagebox
+# import tkinter as tk
+# from tkinter import messagebox
 import psycopg2
 from datetime import datetime, timedelta
-import pytz
+# import pytz
 
 # Configurações do GPIO
 RELAY_CHANNELS = {
