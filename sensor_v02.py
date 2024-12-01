@@ -54,7 +54,7 @@ def save_to_postgresql(temperature_c, humidity, timestamp):
             connection.close()
 
 # Set local timezone
-local_timezone = pytz.timezone('Your/Timezone')  # Replace with your local timezone, e.g., 'America/New_York'
+local_timezone = pytz.timezone('America/Sao_Paulo')  # Replace with your local timezone, e.g., 'America/New_York'
 
 # Main loop for capturing sensor data and saving it to PostgreSQL
 while True:
