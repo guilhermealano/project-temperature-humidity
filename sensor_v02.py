@@ -79,7 +79,7 @@ while True:
     except RuntimeError as error:
         # Handle errors from the DHT22 sensor (expected occasional errors)
         print(f"Sensor error: {error.args[0]}")
-        time.sleep(2.0)
+        time.sleep(60)
         continue
 
     except Exception as error:
@@ -88,4 +88,4 @@ while True:
         raise error
 
     # Wait for 2 seconds before capturing the next data
-    time.sleep(2.0)
+    time.sleep(60)
