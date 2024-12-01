@@ -48,7 +48,7 @@ def log_reading(temperature, humidity):
     if conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                "INSERT INTO sensor_data (temperature_c, humidity, timestamp) VALUES (%s, %s, %s)",
+                "INSERT INTO leituras (temperatura, umidade) VALUES (%s, %s)",
                 (temperature, humidity)
             )
             conn.commit()
