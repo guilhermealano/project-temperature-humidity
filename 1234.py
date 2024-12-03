@@ -31,9 +31,9 @@ desired_humidity = 50.0     # Umidade desejada inicial
 def connect_db():
     try:
         conn = psycopg2.connect(
-            dbname="varmengo",
-            user="usuario_real",
-            password="palnomengo",
+            dbname="services",
+            user="postgres",
+            password="postgres",
             host="localhost"
         )
         return conn
