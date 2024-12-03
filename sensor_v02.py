@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import time
 import board
 import adafruit_dht
