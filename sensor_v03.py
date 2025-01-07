@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 import time
+import adafruit_dht
 import board
 import RPi.GPIO as GPIO
-import adafruit_dht
 import psycopg2
-from datetime import datetime
+from datetime import datetime, timedelta
 import pytz
 
 # Configurações do GPIO
