@@ -21,7 +21,7 @@ for channel in RELAY_CHANNELS.values():
     GPIO.setup(channel, GPIO.OUT)
 
 # Initialize the DHT22 sensor with the data pin connected to GPIO4 (D4)
-dhtDevice = adafruit_dht.DHT22(board.D4)
+dhtDevice = adafruit_dht.DHT22(board.D4, use_pulseio=True)
 
 # Variáveis globais para metas
 desired_temperature = 25.0  # Temperatura desejada inicial
@@ -97,10 +97,11 @@ def read_sensor():
             # Handle errors from the DHT22 sensor (expected occasional errors)
             print(f"Sensor error: {error.args[0]}")
             time.sleep(60)
-            
+    except RuntimeError as error:
+        print(f"Sensor error: {error.args[0]}")
+
     except Exception as error:
         dhtDevice.exit()
         raise error
         
-    # except RuntimeError as error:
-    #     print(f"Sensor error: {error.args[0]}")
+
