@@ -76,7 +76,7 @@ def read_sensor():
         if temperature_c is not None and humidity is not None:
 
             # Log das leituras no banco de dados
-            log_reading(temperature_c, humidity)
+            log_reading(temperature_c, humidity, timestamp)
 
             # Controla as resistências com base nas metas
             if temperature_c < desired_temperature:
@@ -101,10 +101,9 @@ def read_sensor():
     except RuntimeError as error:
         print(f"Sensor error: {error.args[0]}")
 
+    except Exception as error:
+        dhtDevice.exit()
+        raise error
+
 # Inicia a leitura do sensor
 read_sensor()
-
-
-# except Exception as error:
-#     dhtDevice.exit()
-#     raise error
