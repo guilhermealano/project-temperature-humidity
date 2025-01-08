@@ -105,5 +105,8 @@ def read_sensor():
         dhtDevice.exit()
         raise error
 
+    # Wait for 2 seconds before capturing the next data
+    time.sleep(60)
+    
 # Inicia a leitura do sensor
 read_sensor()
