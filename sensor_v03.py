@@ -101,9 +101,10 @@ def read_sensor():
     except RuntimeError as error:
         print(f"Sensor error: {error.args[0]}")
 
-    except Exception as error:
-        dhtDevice.exit()
-        raise error
-
 # Inicia a leitura do sensor
 read_sensor()
+
+
+# except Exception as error:
+#     dhtDevice.exit()
+#     raise error
