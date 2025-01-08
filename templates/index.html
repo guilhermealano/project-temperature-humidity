@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoramento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .data {
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Monitoramento de Temperatura e Umidade</h1>
+        <div class="data">
+            <h2>Dados Atuais</h2>
+            <p><strong>Temperatura:</strong> <span id="current-temperature">{{ temperature }}</span>°C</p>
+            <p><strong>Umidade:</strong> <span id="current-humidity">{{ humidity }}</span>%</p>
+            <p><strong>Última atualização:</strong> {{ timestamp }}</p>
+        </div>
+        <div class="form">
+            <h2>Definir Novos Valores</h2>
+            <div class="form-group">
+                <label for="temperature">Temperatura Desejada (°C):</label>
+                <input type="number" id="temperature" placeholder="Ex: 2.0">
+            </div>
+            <div class="form-group">
+                <label for="humidity">Umidade Desejada (%):</label>
+                <input type="number" id="humidity" placeholder="Ex: 20.0">
+            </div>
+            <button id="update-button">Atualizar</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById("update-button").addEventListener("click", () => {
+            const temperature = parseFloat(document.getElementById("temperature").value);
+            const humidity = parseFloat(document.getElementById("humidity").value);
+
+            fetch("/update", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ temperature, humidity }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Valores atualizados com sucesso!");
+                    } else {
+                        alert("Erro ao atualizar os valores.");
+                    }
+                })
+                .catch(err => console.error(err));
+        });
+    </script>
+</body>
+</html>
