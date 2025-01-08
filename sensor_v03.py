@@ -24,8 +24,8 @@ for channel in RELAY_CHANNELS.values():
 dhtDevice = adafruit_dht.DHT22(board.D4, use_pulseio=True)
 
 # Variáveis globais para metas
-desired_temperature = 25.0  # Temperatura desejada inicial
-desired_humidity = 50.0     # Umidade desejada inicial
+desired_temperature = 2.0  # Temperatura desejada inicial
+desired_humidity = 20.0     # Umidade desejada inicial
 
 # Função para conectar ao banco de dados
 def connect_db():
@@ -107,6 +107,6 @@ def read_sensor():
 
     # Wait for 2 seconds before capturing the next data
     time.sleep(60)
-    
+
 # Inicia a leitura do sensor
 read_sensor()
