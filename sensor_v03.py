@@ -4,7 +4,7 @@ import adafruit_dht
 import board
 import RPi.GPIO as GPIO
 import psycopg2
-from datetime import datetime, timedelta
+from datetime import datetime
 import pytz
 
 # Configurações do GPIO
@@ -54,7 +54,7 @@ def log_reading(temperature_c, humidity, timestamp):
         conn.close()
 
 # Set local timezone
-local_timezone = pytz.timezone('America/Sao_Paulo')  # Replace with your local timezone, e.g., 'America/New_York'
+local_timezone = pytz.timezone('America/Sao_Paulo')  # Substitua pelo seu fuso horário local
 
 # Função para ler o sensor
 def read_sensor():
@@ -63,10 +63,10 @@ def read_sensor():
         temperature_c = dhtDevice.temperature
         humidity = dhtDevice.humidity
 
-        # Get the current time with local timezone
+        # Obter o horário atual com o fuso horário local
         timestamp = datetime.now(local_timezone)
 
-        # Print the values to the serial port (console)
+        # Exibir os valores no console
         print(
             "Temp: {:.1f} C  Humidity: {}%  Timestamp: {}".format(
                 temperature_c, humidity, timestamp
@@ -74,7 +74,6 @@ def read_sensor():
         )
 
         if temperature_c is not None and humidity is not None:
-
             # Log das leituras no banco de dados
             log_reading(temperature_c, humidity, timestamp)
 
@@ -92,21 +91,18 @@ def read_sensor():
             else:
                 GPIO.output(RELAY_CHANNELS["humidity_on"], GPIO.LOW)
                 GPIO.output(RELAY_CHANNELS["humidity_off"], GPIO.HIGH)
-                
-        else:
-            # Handle errors from the DHT22 sensor (expected occasional errors)
-            print(f"Sensor error: {error.args[0]}")
-            time.sleep(60)
 
     except RuntimeError as error:
-        print(f"Sensor error: {error.args[0]}")
-
+        print(f"Erro do sensor: {error.args[0]}")
     except Exception as error:
         dhtDevice.exit()
         raise error
 
-    # Wait for 2 seconds before capturing the next data
-    time.sleep(60)
-
-# Inicia a leitura do sensor
-read_sensor()
+# Loop principal para executar a leitura do sensor a cada 60 segundos
+try:
+    while True:
+        read_sensor()
+        time.sleep(60)  # Aguardar 60 segundos antes da próxima execução
+except KeyboardInterrupt:
+    print("Encerrando o programa.")
+    GPIO.cleanup()
