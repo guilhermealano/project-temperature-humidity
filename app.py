@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template
 import psycopg2
 
 app = Flask(__name__)
 
-# Conexão com o banco de dados
+# Função para conectar ao banco de dados
 def connect_db():
     try:
         conn = psycopg2.connect(
@@ -17,35 +17,40 @@ def connect_db():
         print(f"Erro ao conectar ao banco de dados: {e}")
         return None
 
-# Função para buscar os dados mais recentes
+# Função para obter os dados mais recentes
 def get_latest_data():
     conn = connect_db()
     if conn:
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT temperature_c, humidity, timestamp FROM sensor_data ORDER BY timestamp DESC LIMIT 1")
-            result = cursor.fetchone()
-        conn.close()
-        return result
+        try:
+            with conn.cursor() as cursor:
+                cursor.execute(
+                    "SELECT temperature_c, humidity, timestamp FROM sensor_data ORDER BY timestamp DESC LIMIT 1"
+                )
+                data = cursor.fetchone()
+                return data  # Retorna uma tupla (temperature_c, humidity, timestamp)
+        except Exception as e:
+            print(f"Erro ao consultar dados: {e}")
+        finally:
+            conn.close()
     return None
 
-# Rota principal para renderizar a página
-@app.route("/")
+@app.route('/')
 def index():
+    # Busca os dados mais recentes
     data = get_latest_data()
     if data:
         temperature, humidity, timestamp = data
+        return render_template(
+            'index.html',
+            temperature=temperature,
+            humidity=humidity,
+            timestamp=timestamp
+        )
     else:
-        temperature, humidity, timestamp = "N/A", "N/A", "N/A"
-    return render_template("index.html", temperature=temperature, humidity=humidity, timestamp=timestamp)
-
-# Rota para atualizar os valores desejados
-@app.route("/update", methods=["POST"])
-def update_desired_values():
-    global desired_temperature, desired_humidity
-    data = request.json
-    desired_temperature = data.get("temperature", desired_temperature)
-    desired_humidity = data.get("humidity", desired_humidity)
-    return jsonify({"success": True, "temperature": desired_temperature, "humidity": desired_humidity})
+        return render_template(
+            'index.html',
+            error="Nenhum dado disponível."
+        )
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+    app.run(host='0.0.0.0', port=5000)

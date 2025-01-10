@@ -3,68 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitoramento</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .data {
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-    </style>
+    <title>Monitor de Sensor</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Monitoramento de Temperatura e Umidade</h1>
-        <div class="data">
-            <h2>Dados Atuais</h2>
-            <p><strong>Temperatura:</strong> <span id="current-temperature">{{ temperature }}</span>°C</p>
-            <p><strong>Umidade:</strong> <span id="current-humidity">{{ humidity }}</span>%</p>
-            <p><strong>Última atualização:</strong> {{ timestamp }}</p>
-        </div>
-        <div class="form">
-            <h2>Definir Novos Valores</h2>
-            <div class="form-group">
-                <label for="temperature">Temperatura Desejada (°C):</label>
-                <input type="number" id="temperature" placeholder="Ex: 2.0">
-            </div>
-            <div class="form-group">
-                <label for="humidity">Umidade Desejada (%):</label>
-                <input type="number" id="humidity" placeholder="Ex: 20.0">
-            </div>
-            <button id="update-button">Atualizar</button>
-        </div>
+    <h1>Monitor de Sensor</h1>
+    <div>
+        <h2>Leituras Atuais</h2>
+        <p><strong>Temperatura:</strong> {{ temperature }} °C</p>
+        <p><strong>Umidade:</strong> {{ humidity }}%</p>
+        <p><strong>Última Atualização:</strong> {{ timestamp }}</p>
+    </div>
+    <div>
+        <h2>Configurações</h2>
+        <form id="settings-form">
+            <label for="desired_temperature">Temperatura Desejada:</label>
+            <input type="number" id="desired_temperature" name="desired_temperature" value="{{ desired_temperature }}" step="0.1">
+            <br>
+            <label for="desired_humidity">Umidade Desejada:</label>
+            <input type="number" id="desired_humidity" name="desired_humidity" value="{{ desired_humidity }}" step="0.1">
+            <br>
+            <button type="button" onclick="updateSettings()">Atualizar</button>
+        </form>
     </div>
     <script>
-        document.getElementById("update-button").addEventListener("click", () => {
-            const temperature = parseFloat(document.getElementById("temperature").value);
-            const humidity = parseFloat(document.getElementById("humidity").value);
+        function updateSettings() {
+            const desiredTemperature = document.getElementById("desired_temperature").value;
+            const desiredHumidity = document.getElementById("desired_humidity").value;
 
-            fetch("/update", {
+            fetch("/update_settings", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ temperature, humidity }),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert("Valores atualizados com sucesso!");
-                    } else {
-                        alert("Erro ao atualizar os valores.");
-                    }
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    desired_temperature: desiredTemperature,
+                    desired_humidity: desiredHumidity
                 })
-                .catch(err => console.error(err));
-        });
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message || data.error);
+            })
+            .catch(err => {
+                console.error("Erro ao atualizar configurações:", err);
+            });
+        }
     </script>
 </body>
 </html>
