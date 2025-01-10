@@ -3,50 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monitor de Sensor</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Monitoramento de Sensor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        .card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .card h2 {
+            margin-top: 0;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #ccc;
+        }
+    </style>
 </head>
 <body>
-    <h1>Monitor de Sensor</h1>
-    <div>
-        <h2>Leituras Atuais</h2>
-        <p><strong>Temperatura:</strong> {{ temperature }} °C</p>
-        <p><strong>Umidade:</strong> {{ humidity }}%</p>
-        <p><strong>Última Atualização:</strong> {{ timestamp }}</p>
-    </div>
-    <div>
-        <h2>Configurações</h2>
-        <form id="settings-form">
-            <label for="desired_temperature">Temperatura Desejada:</label>
-            <input type="number" id="desired_temperature" name="desired_temperature" value="{{ desired_temperature }}" step="0.1">
-            <br>
-            <label for="desired_humidity">Umidade Desejada:</label>
-            <input type="number" id="desired_humidity" name="desired_humidity" value="{{ desired_humidity }}" step="0.1">
-            <br>
-            <button type="button" onclick="updateSettings()">Atualizar</button>
-        </form>
-    </div>
-    <script>
-        function updateSettings() {
-            const desiredTemperature = document.getElementById("desired_temperature").value;
-            const desiredHumidity = document.getElementById("desired_humidity").value;
+    <div class="container">
+        <div class="card">
+            <h2>Dados Atuais</h2>
+            <p><strong>Temperatura:</strong> <span id="temperature">--</span> °C</p>
+            <p><strong>Umidade:</strong> <span id="humidity">--</span> %</p>
+            <p><strong>Última Atualização:</strong> <span id="timestamp">--</span></p>
+        </div>
 
-            fetch("/update_settings", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    desired_temperature: desiredTemperature,
-                    desired_humidity: desiredHumidity
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message || data.error);
-            })
-            .catch(err => {
-                console.error("Erro ao atualizar configurações:", err);
-            });
+        <div class="card">
+            <h2>Definir Novos Valores</h2>
+            <label for="new-temperature">Temperatura Desejada (°C):</label>
+            <input type="number" id="new-temperature" step="0.1" required>
+            <br><br>
+            <label for="new-humidity">Umidade Desejada (%):</label>
+            <input type="number" id="new-humidity" step="1" required>
+            <br><br>
+            <button onclick="setParameters()">Atualizar</button>
+        </div>
+    </div>
+
+    <script>
+        // Atualiza os dados na tela
+        async function fetchSensorData() {
+            const response = await fetch('/api/sensor');
+            const data = await response.json();
+            if (!data.error) {
+                document.getElementById('temperature').textContent = data.temperature;
+                document.getElementById('humidity').textContent = data.humidity;
+                document.getElementById('timestamp').textContent = data.timestamp;
+            }
         }
+
+        // Envia novos parâmetros
+        async function setParameters() {
+            const temperature = parseFloat(document.getElementById('new-temperature').value);
+            const humidity = parseInt(document.getElementById('new-humidity').value);
+
+            const response = await fetch('/api/parameters', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ temperature, humidity })
+            });
+
+            const result = await response.json();
+            if (result.message) {
+                alert(result.message);
+                fetchSensorData(); // Atualiza os dados
+            } else {
+                alert(result.error);
+            }
+        }
+
+        // Atualiza os dados ao carregar a página
+        fetchSensorData();
     </script>
 </body>
-</html>
+<
