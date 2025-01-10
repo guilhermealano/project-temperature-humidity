@@ -1,83 +1,59 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, render_template, request, redirect
 import psycopg2
 from datetime import datetime
 import pytz
 
 app = Flask(__name__)
 
-# Configuração de conexão ao banco de dados
+# Banco de dados
 DB_CONFIG = {
     "dbname": "services",
     "user": "postgres",
     "password": "postgres",
-    "host": "localhost"
+    "host": "localhost",
 }
 
-local_timezone = pytz.timezone('America/Sao_Paulo')  # Substitua pelo seu fuso horário local
+local_timezone = pytz.timezone('America/Sao_Paulo')
 
-
-# Função para conectar ao banco de dados
+# Conectar ao banco de dados
 def connect_db():
     try:
-        conn = psycopg2.connect(**DB_CONFIG)
-        return conn
+        return psycopg2.connect(**DB_CONFIG)
     except Exception as e:
         print(f"Erro ao conectar ao banco de dados: {e}")
         return None
 
+# Rota principal
+@app.route('/')
+def index():
+    conn = connect_db()
+    if conn:
+        with conn.cursor() as cursor:
+            # Obter os dados mais recentes
+            cursor.execute("SELECT temperature_c, humidity, timestamp FROM sensor_data ORDER BY timestamp DESC LIMIT 1")
+            data = cursor.fetchone()
+            temperature = data[0] if data else None
+            humidity = data[1] if data else None
+        conn.close()
+    else:
+        temperature, humidity = None, None
+    return render_template('index.html', temperature=temperature, humidity=humidity)
 
-# Rota para obter os dados mais recentes do sensor
-@app.route("/api/sensor", methods=["GET"])
-def get_latest_sensor_data():
+# Rota para definir novos valores
+@app.route('/set_params', methods=['POST'])
+def set_params():
+    new_temp = request.form['temperature']
+    new_humidity = request.form['humidity']
     conn = connect_db()
     if conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                "SELECT temperature_c, humidity, timestamp FROM sensor_data ORDER BY timestamp DESC LIMIT 1"
+                "INSERT INTO sensor_param (temperature, humidity, timestamp) VALUES (%s, %s, %s)",
+                (new_temp, new_humidity, datetime.now(local_timezone)),
             )
-            result = cursor.fetchone()
-            if result:
-                data = {
-                    "temperature": result[0],
-                    "humidity": result[1],
-                    "timestamp": result[2].astimezone(local_timezone).strftime("%Y-%m-%d %H:%M:%S")
-                }
-                conn.close()
-                return jsonify(data)
-    return jsonify({"error": "No data found"}), 500
+            conn.commit()
+        conn.close()
+    return redirect('/')
 
-
-# Rota para definir novos parâmetros
-@app.route("/api/parameters", methods=["POST"])
-def set_parameters():
-    try:
-        data = request.json
-        desired_temperature = data.get("temperature")
-        desired_humidity = data.get("humidity")
-        timestamp = datetime.now(local_timezone)
-
-        if desired_temperature is None or desired_humidity is None:
-            return jsonify({"error": "Invalid input"}), 400
-
-        conn = connect_db()
-        if conn:
-            with conn.cursor() as cursor:
-                cursor.execute(
-                    "INSERT INTO sensor_param (desired_temperature, desired_humidity, timestamp) VALUES (%s, %s, %s)",
-                    (desired_temperature, desired_humidity, timestamp)
-                )
-                conn.commit()
-                conn.close()
-                return jsonify({"message": "Parameters updated successfully"})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-# Rota para servir o frontend
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
