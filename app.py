@@ -48,7 +48,7 @@ def set_params():
     if conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                "INSERT INTO sensor_param (temperature, humidity, timestamp) VALUES (%s, %s, %s)",
+                "INSERT INTO sensor_param (desired_temperature, desired_humidity, timestamp) VALUES (%s, %s, %s)",
                 (new_temp, new_humidity, datetime.now(local_timezone)),
             )
             conn.commit()
