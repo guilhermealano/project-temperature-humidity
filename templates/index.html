@@ -9,16 +9,21 @@
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 20px;
+            padding: 0;
+            background-color: #f9f9f9;
         }
         .container {
             max-width: 600px;
             margin: auto;
+            padding: 10px;
         }
         .card {
             border: 1px solid #ccc;
             padding: 20px;
             margin: 20px 0;
             border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         button {
             padding: 10px 20px;
@@ -27,9 +32,48 @@
             color: white;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
+            width: 100%; /* Full width on small screens */
         }
         button:hover {
             background-color: #0056b3;
+        }
+        form label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+        form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .card {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 20px;
+            }
+            h2 {
+                font-size: 18px;
+            }
+        }
+        @media (max-width: 480px) {
+            button {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -45,9 +89,9 @@
             <h2>Definir Novos Valores</h2>
             <form action="/set_params" method="POST">
                 <label for="temperature">Nova Temperatura:</label>
-                <input type="number" name="temperature" step="0.1" required><br><br>
+                <input type="number" name="temperature" step="0.1" required>
                 <label for="humidity">Nova Umidade:</label>
-                <input type="number" name="humidity" step="0.1" required><br><br>
+                <input type="number" name="humidity" step="0.1" required>
                 <button type="submit">Salvar</button>
             </form>
         </div>
