@@ -45,7 +45,7 @@ def connect_db():
 local_timezone = pytz.timezone('America/Sao_Paulo')
 
 # Função para registrar leituras no banco de dados
-def log_reading(temperature_c, humidity):
+def log_reading(temperature_c, humidity, timestamp):
     timestamp = datetime.now(local_timezone)
 
     conn = connect_db()
