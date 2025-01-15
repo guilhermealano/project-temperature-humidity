@@ -27,17 +27,21 @@ def connect_db():
 @app.route('/')
 def index():
     conn = connect_db()
+    temperature, humidity, parameters = None, None, []
     if conn:
         with conn.cursor() as cursor:
-            # Obter os dados mais recentes
+            # Obter os dados mais recentes de sensor_data
             cursor.execute("SELECT temperature_c, humidity, timestamp FROM sensor_data ORDER BY timestamp DESC LIMIT 1")
             data = cursor.fetchone()
-            temperature = data[0] if data else None
-            humidity = data[1] if data else None
+            if data:
+                temperature, humidity = data[0], data[1]
+
+            # Obter os parâmetros mais recentes de sensor_param
+            cursor.execute("SELECT desired_temperature, desired_humidity, timestamp FROM sensor_param ORDER BY timestamp DESC LIMIT 5")
+            parameters = cursor.fetchall()
         conn.close()
-    else:
-        temperature, humidity = None, None
-    return render_template('index.html', temperature=temperature, humidity=humidity)
+
+    return render_template('index.html', temperature=temperature, humidity=humidity, parameters=parameters)
 
 # Rota para definir novos valores
 @app.route('/set_params', methods=['POST'])

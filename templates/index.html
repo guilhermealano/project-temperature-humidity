@@ -80,21 +80,38 @@
 <body>
     <div class="container">
         <h1>Monitoramento de Temperatura e Umidade</h1>
-        <div class="card">
-            <h2>Dados Atuais</h2>
-            <p><strong>Temperatura:</strong> {{ temperature if temperature is not none else "N/A" }}°C</p>
-            <p><strong>Umidade:</strong> {{ humidity if humidity is not none else "N/A" }}%</p>
+        <div class="row">
+            <!-- Coluna: Dados Atuais -->
+            <div class="column">
+                <div class="card">
+                    <h2>Dados Atuais</h2>
+                    <p><strong>Temperatura:</strong> {{ temperature if temperature is not none else "N/A" }}°C</p>
+                    <p><strong>Umidade:</strong> {{ humidity if humidity is not none else "N/A" }}%</p>
+                </div>
+                <div class="card">
+                    <h2>Definir Novos Valores</h2>
+                    <form action="/set_params" method="POST">
+                        <label for="temperature">Nova Temperatura:</label>
+                        <input type="number" name="temperature" step="0.1" required>
+                        <label for="humidity">Nova Umidade:</label>
+                        <input type="number" name="humidity" step="0.1" required>
+                        <button type="submit">Salvar</button>
+                    </form>
+                </div>
+            </div>
+            <!-- Coluna: Parâmetros -->
+            <div class="column">
+                <div class="card">
+                    <h2>Parâmetros</h2>
+                    {% for param in parameters %}
+                    <p><strong>Temperatura Desejada:</strong> {{ param[0] }}°C</p>
+                    <p><strong>Umidade Desejada:</strong> {{ param[1] }}%</p>
+                    <p><strong>Timestamp:</strong> {{ param[2] }}</p>
+                    <hr>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
-        <div class="card">
-            <h2>Definir Novos Valores</h2>
-            <form action="/set_params" method="POST">
-                <label for="temperature">Nova Temperatura:</label>
-                <input type="number" name="temperature" step="0.1" required>
-                <label for="humidity">Nova Umidade:</label>
-                <input type="number" name="humidity" step="0.1" required>
-                <button type="submit">Salvar</button>
-            </form>
-        </div>
-    </div>
+    </div>    
 </body>
 </html>
