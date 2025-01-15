@@ -93,12 +93,13 @@
             <!-- Coluna: Dados Atuais -->
             <div class="column">
                 <div class="card">
-                    <h2>Dados Atuais</h2>
+                    <h2>Dados Atuais Sensores</h2>
                     <p><strong>Temperatura:</strong> {{ temperature if temperature is not none else "N/A" }}°C</p>
                     <p><strong>Umidade:</strong> {{ humidity if humidity is not none else "N/A" }}%</p>
-                </div>
-                <div class="card">
-                    <h2>Parâmetros definidos</h2>
+                 <!-- </div>  -->
+                 <!-- Coluna: Parâmetros -->
+                 <!-- <div class="card"> -->
+                    <h2>Parâmetros Definidos</h2>
                     {% for param in parameters %}
                     <p><strong>Temperatura:</strong> {{ param[0] }}°C</p>
                     <p><strong>Umidade:</strong> {{ param[1] }}%</p>
@@ -107,7 +108,7 @@
                     {% endfor %}
                 </div>
                 <div class="card">
-                    <h2>Definir Novos Valores</h2>
+                    <h2>Definir Novos Parâmetros</h2>
                     <form action="/set_params" method="POST">
                         <label for="temperature">Nova Temperatura:</label>
                         <input type="number" name="temperature" step="0.1" required>
@@ -117,7 +118,6 @@
                     </form>
                 </div>
             </div>
-            <!-- Coluna: Parâmetros -->
             <!-- <div class="column"> -->
             <!-- </div> -->
         </div>
