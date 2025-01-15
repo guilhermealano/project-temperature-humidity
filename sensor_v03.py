@@ -41,10 +41,12 @@ def connect_db():
         print(f"Erro ao conectar ao banco de dados: {e}")
         return None
 
+# Set local timezone
+local_timezone = pytz.timezone('America/Sao_Paulo')
+
 # Função para registrar leituras no banco de dados
 def log_reading(temperature_c, humidity):
-    timezone = pytz.timezone('America/Sao_Paulo')
-    timestamp = datetime.now(timezone)
+    timestamp = datetime.now(local_timezone)
 
     conn = connect_db()
     if conn:
@@ -55,9 +57,6 @@ def log_reading(temperature_c, humidity):
             )
             conn.commit()
         conn.close()
-
-# Set local timezone
-local_timezone = pytz.timezone('America/Sao_Paulo')  # Substitua pelo seu fuso horário local
 
 # Função para ler o sensor
 def read_sensor():
