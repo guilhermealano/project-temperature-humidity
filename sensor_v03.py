@@ -42,7 +42,10 @@ def connect_db():
         return None
 
 # Função para registrar leituras no banco de dados
-def log_reading(temperature_c, humidity, timestamp):
+def log_reading(temperature_c, humidity):
+    timezone = pytz.timezone('America/Sao_Paulo')
+    timestamp = datetime.now(timezone)
+
     conn = connect_db()
     if conn:
         with conn.cursor() as cursor:
