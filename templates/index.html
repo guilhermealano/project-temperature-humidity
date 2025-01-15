@@ -90,21 +90,20 @@
     <div class="container">
         <h1>Monitoramento de Temperatura e Umidade</h1>
         <div class="row">
-            <!-- Coluna: Dados Atuais -->
             <div class="column">
+                <!-- Coluna: Dados Atuais -->
                 <div class="card">
                     <h2>Dados Atuais Sensores</h2>
                     <p><strong>Temperatura:</strong> {{ temperature if temperature is not none else "N/A" }}°C</p>
                     <p><strong>Umidade:</strong> {{ humidity if humidity is not none else "N/A" }}%</p>
-                 <!-- </div>  -->
-                 <!-- Coluna: Parâmetros -->
-                 <!-- <div class="card"> -->
+                </div>
+                <!-- Coluna: Parâmetros -->
+                <div class="card">
                     <h2>Parâmetros Definidos</h2>
                     {% for param in parameters %}
                     <p><strong>Temperatura:</strong> {{ param[0] }}°C</p>
                     <p><strong>Umidade:</strong> {{ param[1] }}%</p>
                     <p><strong>Data do registro:</strong> {{ param[2] }}</p>
-                    <hr>
                     {% endfor %}
                 </div>
                 <div class="card">
@@ -118,8 +117,6 @@
                     </form>
                 </div>
             </div>
-            <!-- <div class="column"> -->
-            <!-- </div> -->
         </div>
     </div>    
 </body>
