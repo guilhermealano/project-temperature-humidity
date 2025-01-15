@@ -118,30 +118,6 @@
                     </form>
                 </div>
             </div>
-            <div class="col-sm-6">
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">Dados Atuais Sensores</h5>
-                    <p><strong>Temperatura:</strong> {{ temperature if temperature is not none else "N/A" }}°C</p>
-                    <p><strong>Umidade:</strong> {{ humidity if humidity is not none else "N/A" }}%</p>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">Parâmetros Definido</h5>
-                    {% for param in parameters %}
-                    <p><strong>Temperatura:</strong> {{ param[0] }}°C</p>
-                    <p><strong>Umidade:</strong> {{ param[1] }}%</p>
-                    <p><strong>Data do registro:</strong> {{ param[2] }}</p>
-                    <hr>
-                    {% endfor %}
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                  </div>
-                </div>
-              </div>
             <!-- <div class="column"> -->
             <!-- </div> -->
         </div>
