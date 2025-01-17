@@ -1,12 +1,13 @@
 version: "2.1"
 
 services:
-  postgres: # nome do serviço a ser criado
-    image: postgres:14-alpine3.15 # nome da imagem existente no docker hub
-    ports: ["5432:5432"] # porta a ser exposta para fora do container
-    networks: [backing-services] # definição de rede virtual para outros possíveis serviços a serem disponibilizados na mesma rede possam acessar
+  postgres:
+    image: postgres
+    restart: always
+    ports: ["5432:5432"]
+    networks: [backing-services]
     # volumes: ["data"] # definição de local onde estará exposto o volume persistente
-    environment: # Variáveis de ambiente , no caso o nome do banco o usuário e senha de acesso que é criada dinamicamente quando o container é criado
+    environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -14,6 +15,10 @@ services:
       
   grafana:
     image: grafana/grafana-oss:latest
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_healthy
     ports: ["3000:3000"]
     networks: [backing-services]
     # volumes: ["grafana_data"]
