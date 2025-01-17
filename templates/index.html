@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monitoramento</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,6 +26,11 @@
             background-color: #fff;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+        .icon {
+            font-size: 18px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
         button {
             padding: 10px 20px;
             border: none;
@@ -33,7 +39,7 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
-            width: 100%; /* Full width on small screens */
+            width: 100%;
         }
         button:hover {
             background-color: #0056b3;
@@ -101,8 +107,14 @@
                 <div class="card">
                     <h2>Parâmetros Definidos</h2>
                     {% for param in parameters %}
-                    <p><strong>Temperatura:</strong> {{ param[0] }}°C</p>
-                    <p><strong>Umidade:</strong> {{ param[1] }}%</p>
+                    <p>
+                        <i class="fas fa-thermometer-half icon"></i>
+                        <strong>Temperatura:</strong> {{ param[0] }}°C
+                    </p>
+                    <p>
+                        <i class="fas fa-tint icon"></i>
+                        <strong>Umidade:</strong> {{ param[1] }}%
+                    </p>
                     <p><strong>Data do registro:</strong> {{ param[2] }}</p>
                     {% endfor %}
                 </div>
