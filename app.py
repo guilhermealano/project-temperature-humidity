@@ -37,7 +37,7 @@ def index():
                 temperature, humidity = data[0], data[1]
 
             # Obter os parâmetros mais recentes de sensor_param
-            cursor.execute("SELECT desired_temperature, desired_humidity, desired_temp_min, desired_temp_max, TO_CHAR(timestamp AT TIME ZONE 'America/Sao_Paulo', 'YYYY-MM-DD HH24:MI:SS') AS localized_timestamp FROM sensor_param ORDER BY timestamp DESC LIMIT 1")
+            cursor.execute("SELECT desired_temperature, desired_temp_min, desired_temp_max, desired_humidity, desired_humi_min, desired_humi_max, TO_CHAR(timestamp AT TIME ZONE 'America/Sao_Paulo', 'YYYY-MM-DD HH24:MI:SS') AS localized_timestamp FROM sensor_param ORDER BY timestamp DESC LIMIT 1")
             parameters = cursor.fetchall()
         conn.close()
 
