@@ -47,15 +47,17 @@ def index():
 @app.route('/set_params', methods=['POST'])
 def set_params():
     new_temp = request.form['temperature']
-    new_humidity = request.form['humidity']
     new_temp_min = request.form['temp_min']
     new_temp_max = request.form['temp_max']
+    new_humidity = request.form['humidity']
+    new_humi_min = request.form['humi_min']
+    new_humi_max = request.form['humi_max']
     conn = connect_db()
     if conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                "INSERT INTO sensor_param (desired_temperature, desired_humidity, desired_temp_min, desired_temp_max, timestamp) VALUES (%s, %s, %s, %s, %s)",
-                (new_temp, new_humidity, new_temp_min, new_temp_max, datetime.now(local_timezone)),
+                "INSERT INTO sensor_param (desired_temperature, desired_humidity, desired_temp_min, desired_temp_max, desired_humi_min, desired_humi_max, timestamp) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                (new_temp, new_humidity, new_temp_min, new_temp_max, new_humi_min, new_humi_max, datetime.now(local_timezone)),
             )
             conn.commit()
         conn.close()
