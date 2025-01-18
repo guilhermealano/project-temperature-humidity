@@ -112,8 +112,24 @@
                         <strong>Temperatura:</strong> {{ param[0] }}°C
                     </p>
                     <p>
+                        <i class="fas fa-thermometer-quarter icon"></i>
+                        <strong>Temperatura mínima:</strong> {{ param[0] }}°C
+                    </p>
+                    <p>
+                        <i class="fas fa-thermometer-full icon"></i>
+                        <strong>Temperatura máxima:</strong> {{ param[0] }}°C
+                    </p>
+                    <p>
                         <i class="fas fa-tint icon"></i>
                         <strong>Umidade:</strong> {{ param[1] }}%
+                    </p>
+                    <p>
+                        <i class="fas fa-arrow-down"></i>
+                        <strong>Umidade mínima:</strong> {{ param[1] }}%
+                    </p>
+                    <p>
+                        <i class="fas fa-arrow-up"></i>
+                        <strong>Umidade máxima:</strong> {{ param[1] }}%
                     </p>
                     <p><strong>Data do registro:</strong> {{ param[2] }}</p>
                     {% endfor %}
@@ -121,8 +137,12 @@
                 <div class="card">
                     <h2>Definir Novos Parâmetros</h2>
                     <form action="/set_params" method="POST">
-                        <label for="temperature">Nova Temperatura:</label>
+                        <label for="temperature">Temperatura padrão:</label>
                         <input type="number" name="temperature" step="0.1" required>
+                        <label for="temp_min">Temperatura mínima:</label>
+                        <input type="number" name="temp_min" step="0.1" required>
+                        <label for="temp_max">Temperatura máxima:</label>
+                        <input type="number" name="temp_max" step="0.1" required>
                         <label for="humidity">Nova Umidade:</label>
                         <input type="number" name="humidity" step="0.1" required>
                         <button type="submit">Salvar</button>

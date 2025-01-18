@@ -37,7 +37,7 @@ def index():
                 temperature, humidity = data[0], data[1]
 
             # Obter os parâmetros mais recentes de sensor_param
-            cursor.execute("SELECT desired_temperature, desired_humidity, TO_CHAR(timestamp AT TIME ZONE 'America/Sao_Paulo', 'YYYY-MM-DD HH24:MI:SS') AS localized_timestamp FROM sensor_param ORDER BY timestamp DESC LIMIT 1")
+            cursor.execute("SELECT desired_temperature, desired_humidity, TO_CHAR(timestamp AT TIME ZONE 'America/Sao_Paulo', 'YYYY-MM-DD HH24:MI:SS',  desired_temp_min, desired_temp_max) AS localized_timestamp FROM sensor_param ORDER BY timestamp DESC LIMIT 1")
             parameters = cursor.fetchall()
         conn.close()
 
@@ -48,12 +48,14 @@ def index():
 def set_params():
     new_temp = request.form['temperature']
     new_humidity = request.form['humidity']
+    new_temp_min = request.form['temp_min']
+    new_temp_max = request.form['temp_max']
     conn = connect_db()
     if conn:
         with conn.cursor() as cursor:
             cursor.execute(
-                "INSERT INTO sensor_param (desired_temperature, desired_humidity, timestamp) VALUES (%s, %s, %s)",
-                (new_temp, new_humidity, datetime.now(local_timezone)),
+                "INSERT INTO sensor_param (desired_temperature, desired_humidity, timestamp, desired_temp_min, desired_temp_max) VALUES (%s, %s, %s)",
+                (new_temp, new_humidity, datetime.now(local_timezone), new_temp_min, new_temp_max),
             )
             conn.commit()
         conn.close()
