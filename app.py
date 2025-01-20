@@ -43,6 +43,10 @@ def index():
 
     return render_template('index.html', temperature=temperature, humidity=humidity, parameters=parameters)
 
+@app.route('/params')
+def params():
+    return render_template('params.html')
+
 # Rota para definir novos valores
 @app.route('/set_params', methods=['POST'])
 def set_params():

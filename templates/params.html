@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Central</title>
+    <title>Definir Parâmetros</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
@@ -75,42 +75,28 @@
         <a href="/params"><button>Definir Parâmetros</button></a>
     </div>
     <div class="container">
-        <h1>Central de Temperatura e Umidade</h1>
-        <div class="row">
-            <div class="column">
-                <!-- Coluna: Dados Atuais -->
-                <div class="card">
-                    <h2>Dados Atuais Sensores</h2>
-                    <p><strong>Temperatura:</strong> {{ temperature if temperature is not none else "N/A" }}°C</p>
-                    <p><strong>Umidade:</strong> {{ humidity if humidity is not none else "N/A" }}%</p>
-                </div>
-                <!-- Coluna: Parâmetros -->
-                <div class="card">
-                    <h2>Parâmetros Definidos</h2>
-                    {% for param in parameters %}
-                    <p>
-                        <i class="fas fa-thermometer-half"></i> <strong>Temperatura:</strong> {{ param[0] }}°C
-                    </p>
-                    <p>
-                        <i class="fas fa-thermometer-quarter"></i> <strong>Temperatura mínima:</strong> {{ param[1] }}°C
-                    </p>
-                    <p>
-                        <i class="fas fa-thermometer-full"></i> <strong>Temperatura máxima:</strong> {{ param[2] }}°C
-                    </p>
-                    <p>
-                        <i class="fas fa-tint"></i> <strong>Umidade:</strong> {{ param[3] }}%
-                    </p>
-                    <p>
-                        <i class="fas fa-arrow-down"></i> <strong>Umidade mínima:</strong> {{ param[4] }}%
-                    </p>
-                    <p>
-                        <i class="fas fa-arrow-up"></i> <strong>Umidade máxima:</strong> {{ param[5] }}%
-                    </p>
-                    <p><strong>Data do registro:</strong> {{ param[6] }}</p>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
+        <h2>Definir Novos Parâmetros</h2>
+        <form action="/set_params" method="POST">
+            <label for="temperature">Temperatura padrão:</label>
+            <input type="number" name="temperature" step="0.1" required>
+
+            <label for="temp_min">Temperatura mínima:</label>
+            <input type="number" name="temp_min" step="0.1" required>
+
+            <label for="temp_max">Temperatura máxima:</label>
+            <input type="number" name="temp_max" step="0.1" required>
+
+            <label for="humidity">Umidade padrão:</label>
+            <input type="number" name="humidity" step="0.1" required>
+
+            <label for="humi_min">Umidade mínima:</label>
+            <input type="number" name="humi_min" step="0.1" required>
+
+            <label for="humi_max">Umidade máxima:</label>
+            <input type="number" name="humi_max" step="0.1" required>
+
+            <button type="submit">Salvar</button>
+        </form>
     </div>
 </body>
 </html>
