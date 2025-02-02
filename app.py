@@ -1,15 +1,17 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, request, redirect, jsonify
 import psycopg2
 from datetime import datetime
 import pytz
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 # Banco de dados
 DB_CONFIG = {
     "dbname": "services",
     "user": "postgres",
-    "password": "postgres",
+    "password": "L@cerda#Aut0",
     "host": "localhost",
 }
 
@@ -22,6 +24,27 @@ def connect_db():
     except Exception as e:
         print(f"Erro ao conectar ao banco de dados: {e}")
         return None
+
+# Rota para servir os dados ao frontend
+@app.route('/api')
+def get_data():
+    conn = connect_db()
+    temperature, humidity, parameters = None, None, []
+    if conn:
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT temperature_c, humidity FROM sensor_data ORDER BY timestamp DESC LIMIT 1")
+            data = cursor.fetchone()
+            if data:
+                temperature, humidity = data[0], data[1]
+
+            # Obter os parâmetros mais recentes de sensor_param
+            cursor.execute("SELECT desired_temperature, desired_temp_min, desired_temp_max, desired_humidity, desired_humi_min, desired_humi_max, TO_CHAR(timestamp AT TIME ZONE 'America/Sao_Paulo', 'YYYY-MM-DD HH24:MI:SS') AS localized_timestamp FROM sensor_param ORDER BY timestamp DESC LIMIT 1")
+            parameters = cursor.fetchall()
+
+        conn.close()
+
+    return jsonify({"temperature": temperature, "humidity": humidity, "parameters": parameters})
+
 
 # Rota principal
 @app.route('/')
@@ -40,8 +63,8 @@ def index():
             cursor.execute("SELECT desired_temperature, desired_temp_min, desired_temp_max, desired_humidity, desired_humi_min, desired_humi_max, TO_CHAR(timestamp AT TIME ZONE 'America/Sao_Paulo', 'YYYY-MM-DD HH24:MI:SS') AS localized_timestamp FROM sensor_param ORDER BY timestamp DESC LIMIT 1")
             parameters = cursor.fetchall()
         conn.close()
-
-    return render_template('index.html', temperature=temperature, humidity=humidity, parameters=parameters)
+    return jsonify({"temperature": temperature, "humidity": humidity, "parameters": parameters})
+    #return render_template('index.html', temperature=temperature, humidity=humidity, parameters=parameters)
 
 @app.route('/params')
 def params():
