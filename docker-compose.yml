@@ -9,8 +9,8 @@ services:
     # volumes: ["data"] # definição de local onde estará exposto o volume persistente
     environment:
       POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: ENVKEY_PGUSER
+      POSTGRES_PASSWORD: ENVKEY_PGPWD
       TZ: "America/Sao_Paulo"
       
   grafana:
