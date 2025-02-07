@@ -11,7 +11,7 @@ CORS(app)
 DB_CONFIG = {
     "dbname": "services",
     "user": "postgres",
-    "password": "L@cerda#Aut0",
+    "password": "postgres",
     "host": "localhost",
 }
 
