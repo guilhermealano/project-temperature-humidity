@@ -2,6 +2,11 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from datetime import datetime
 import psycopg2
+import os
+from dotenv import load_dotenv
+
+# Carregar variáveis do arquivo .env
+load_dotenv()
 
 app = FastAPI()
 
@@ -13,11 +18,11 @@ class Reading(BaseModel):
 # Função para conectar ao banco de dados
 def connect_db():
     return psycopg2.connect(
-        dbname="seu_banco",
-        user="seu_usuario",
-        password="sua_senha",
-        host="seu_host",
-        port="5432"
+        dbname=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        host=os.getenv("DB_HOST"),
+        port=os.getenv("DB_PORT", "5432")
     )
 
 @app.post("/api/v1/sensor/senddata/")
