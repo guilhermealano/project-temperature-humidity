@@ -36,3 +36,19 @@ async def log_reading(reading: Reading):
         return {"message": "Reading logged successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+
+@app.get("/api/v1/sensor/get_data_sensor/")
+async def get_data_sensor():
+    try:
+        conn = connect_db()
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT id, temperature_c, humidity, timestamp FROM sensor_data ORDER BY timestamp DESC")
+            data = cursor.fetchall()
+        conn.close()
+        
+        return [
+            {"id": row[0], "temperature_c": row[1], "humidity": row[2], "timestamp": row[3].isoformat()} 
+            for row in data
+        ]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
