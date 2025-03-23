@@ -42,8 +42,8 @@ async def log_reading(reading: Reading):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
-@app.get("/api/v1/sensor/get_data_sensor/")
-async def get_data_sensor():
+@app.get("/api/v1/sensor/get_data_old/")
+async def get_data_old():
     try:
         conn = connect_db()
         with conn.cursor() as cursor:
@@ -55,5 +55,32 @@ async def get_data_sensor():
             {"id": row[0], "temperature_c": row[1], "humidity": row[2], "timestamp": row[3].isoformat()} 
             for row in data
         ]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+
+@app.get("/api/v1/sensor/get_data_sensor/")
+async def get_data_sensor():
+    try:
+        conn = connect_db()
+        temperature, humidity, parameters = None, None, []
+        
+        with conn.cursor() as cursor:
+            # Obter os dados mais recentes de sensor_data
+            cursor.execute("SELECT temperature_c, humidity, timestamp FROM sensor_data ORDER BY timestamp DESC LIMIT 1")
+            data = cursor.fetchone()
+            if data:
+                temperature, humidity = data[0], data[1]
+
+            # Obter os parâmetros mais recentes de sensor_param
+            cursor.execute("""
+                SELECT desired_temperature, desired_temp_min, desired_temp_max, 
+                       desired_humidity, desired_humi_min, desired_humi_max, 
+                       TO_CHAR(timestamp AT TIME ZONE 'America/Sao_Paulo', 'YYYY-MM-DD HH24:MI:SS') 
+                FROM sensor_param ORDER BY timestamp DESC LIMIT 1
+            """)
+            parameters = cursor.fetchall()
+        conn.close()
+        
+        return {"temperature": temperature, "humidity": humidity, "parameters": parameters}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
