@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Form
 from pydantic import BaseModel
 from datetime import datetime
 import psycopg2
@@ -14,6 +14,14 @@ app = FastAPI()
 class Reading(BaseModel):
     temperature_c: float
     humidity: float
+
+class SensorParams(BaseModel):
+    desired_temperature: float
+    desired_temp_min: float
+    desired_temp_max: float
+    desired_humidity: float
+    desired_humi_min: float
+    desired_humi_max: float
 
 # Função para conectar ao banco de dados
 def connect_db():
@@ -82,5 +90,30 @@ async def get_data_sensor():
         conn.close()
         
         return {"temperature": temperature, "humidity": humidity, "parameters": parameters}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+
+@app.post("/api/v1/sensor/set_params/")
+async def set_params(
+    desired_temperature: float = Form(...),
+    desired_temp_min: float = Form(...),
+    desired_temp_max: float = Form(...),
+    desired_humidity: float = Form(...),
+    desired_humi_min: float = Form(...),
+    desired_humi_max: float = Form(...),
+):
+    try:
+        conn = connect_db()
+        timestamp = datetime.now()
+        
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "INSERT INTO sensor_param (desired_temperature, desired_humidity, desired_temp_min, desired_temp_max, desired_humi_min, desired_humi_max, timestamp) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                (desired_temperature, desired_humidity, desired_temp_min, desired_temp_max, desired_humi_min, desired_humi_max, timestamp),
+            )
+            conn.commit()
+        conn.close()
+        
+        return {"message": "Parameters updated successfully"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
