@@ -91,16 +91,10 @@ def read_sensor():
         print(f"Temp: {temperature_c:.1f} C  Humidity: {humidity}%  Timestamp: {timestamp}")
 
         if temperature_c is not None and humidity is not None:
-            # Log das leituras na API Fastify
-            log_reading(temperature_c, humidity)
+            # Log das leituras no banco de dados
+            log_reading(temperature_c, humidity, timestamp)
 
-            # Buscar parâmetros atualizados da API
-            params = get_sensor_params()
-            if params:
-                desired_temperature = params["desired_temperature"]
-                desired_humidity = params["desired_humidity"]
-
-            # Controlar os relés com base nos parâmetros
+            # Controla as resistências com base nas metas
             if temperature_c < desired_temperature:
                 GPIO.output(RELAY_CHANNELS["temp_on"], GPIO.HIGH)
                 GPIO.output(RELAY_CHANNELS["temp_off"], GPIO.LOW)
