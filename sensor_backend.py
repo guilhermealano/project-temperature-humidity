@@ -76,19 +76,25 @@ def log_reading(temperature_c, humidity):
         print(f"Erro ao enviar dados para API: {e}")
         return None
 
+# Set local timezone
+local_timezone = pytz.timezone('America/Sao_Paulo')
+
 # Função para ler o sensor
 def read_sensor():
     global desired_temperature, desired_humidity
-
     try:
         temperature_c = dhtDevice.temperature
         humidity = dhtDevice.humidity
 
-        # Obter o horário atual
-        timestamp = datetime.now()
+        # Obter o horário atual com o fuso horário local
+        timestamp = datetime.now(local_timezone)
 
-        # Exibir valores no console
-        print(f"Temp: {temperature_c:.1f} C  Humidity: {humidity}%  Timestamp: {timestamp}")
+        # Exibir os valores no console
+        print(
+            "Temp: {:.1f} C  Humidity: {}%  Timestamp: {}".format(
+                temperature_c, humidity, timestamp
+            )
+        )
 
         if temperature_c is not None and humidity is not None:
             # Log das leituras no banco de dados
