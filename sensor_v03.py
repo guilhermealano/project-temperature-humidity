@@ -6,6 +6,11 @@ import RPi.GPIO as GPIO
 import psycopg2
 from datetime import datetime
 import pytz
+import os
+from dotenv import load_dotenv
+
+# URL da API Fastify
+FASTIFY_API_URL = os.getenv("FASTIFY_API_URL", "http://192.168.0.208:3000/api/v1/sensor/senddata")
 
 # Configurações do GPIO
 RELAY_CHANNELS = {
@@ -32,8 +37,8 @@ def connect_db():
     try:
         conn = psycopg2.connect(
             dbname="services",
-            user="postgres",
-            password="postgres",
+            user="ENVKEY_PGUSER",
+            password="ENVKEY_PGPWD",
             host="localhost"
         )
         return conn
@@ -45,18 +50,35 @@ def connect_db():
 local_timezone = pytz.timezone('America/Sao_Paulo')
 
 # Função para registrar leituras no banco de dados
-def log_reading(temperature_c, humidity, timestamp):
-    timestamp = datetime.now(local_timezone)
+#def log_reading(temperature_c, humidity, timestamp):
+#    timestamp = datetime.now(local_timezone)
+#
+#    conn = connect_db()
+#    if conn:
+#        with conn.cursor() as cursor:
+#            cursor.execute(
+#                "INSERT INTO sensor_data (temperature_c, humidity, timestamp) VALUES (%s, %s, %s)",
+#                (temperature_c, humidity, timestamp)
+#            )
+#            conn.commit()
+#        conn.close()
 
-    conn = connect_db()
-    if conn:
-        with conn.cursor() as cursor:
-            cursor.execute(
-                "INSERT INTO sensor_data (temperature_c, humidity, timestamp) VALUES (%s, %s, %s)",
-                (temperature_c, humidity, timestamp)
-            )
-            conn.commit()
-        conn.close()
+def log_reading(temperature_c, humidity):
+    timestamp = datetime.now().isoformat()  # Formatar timestamp corretamente
+
+    payload = {
+        "temperature_c": temperature_c,
+        "humidity": humidity,
+        "timestamp": timestamp
+    }
+
+    try:
+        response = requests.post(FASTIFY_API_URL, json=payload)
+        response.raise_for_status()  # Lança um erro para status HTTP 4xx/5xx
+        return response.json()  # Retorna a resposta da API
+    except requests.exceptions.RequestException as e:
+        print(f"Erro ao enviar dados para API: {e}")
+        return None
 
 # Função para ler o sensor
 def read_sensor():
